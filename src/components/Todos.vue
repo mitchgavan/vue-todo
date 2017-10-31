@@ -3,15 +3,25 @@
 
     <header class="header">
 			<h1>todos</h1>
-			<input class="new-todo" autofocus autocomplete="off" placeholder="What needs to be done?">
+			<input
+        class="new-todo"
+        autofocus
+        autocomplete="off"
+        placeholder="What needs to be done?"
+        v-model="newTodo"
+        @keyup.enter="addTodo"
+      >
 		</header>
 
     <section class="main">
       <ul class="todo-list">
-    		<li class="todo">
+    		<li
+          class="todo"
+          v-for="todo in todos"
+        >
     			<div class="view">
     				<input class="toggle" type="checkbox">
-    				<label></label>
+    				<label>{{todo}}</label>
     				<button class="destroy"></button>
     			</div>
     			<input class="edit" type="text">
@@ -42,7 +52,15 @@ export default {
   data() {
     return {
       isActive: false,
+      newTodo: '',
+      todos: [],
     };
+  },
+  methods: {
+    addTodo() {
+      this.todos.push(this.newTodo);
+      this.newTodo = '';
+    },
   },
 };
 </script>
