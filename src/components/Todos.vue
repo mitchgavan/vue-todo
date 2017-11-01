@@ -20,8 +20,12 @@
           v-for="todo in todos"
         >
     			<div class="view">
-    				<input class="toggle" type="checkbox">
-    				<label>{{todo}}</label>
+    				<input
+              class="toggle"
+              type="checkbox"
+              v-model="todo.completed"
+            >
+    				<label>{{todo.title}}</label>
     				<button class="destroy"></button>
     			</div>
     			<input class="edit" type="text">
@@ -58,7 +62,11 @@ export default {
   },
   methods: {
     addTodo() {
-      this.todos.push(this.newTodo);
+      const value = this.newTodo && this.newTodo.trim();
+      if (!value) {
+        return;
+      }
+      this.todos.push({ title: value, completed: false });
       this.newTodo = '';
     },
   },
