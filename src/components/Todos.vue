@@ -17,7 +17,7 @@
       <ul class="todo-list">
     		<li
           class="todo"
-          v-for="todo in todos"
+          v-for="todo in filteredTodos"
         >
     			<div class="view">
     				<input
@@ -38,9 +38,21 @@
 				<strong></strong>1 item left
 			</span>
 			<ul class="filters">
-				<li><a href="#/all">All</a></li>
-				<li><a href="#/active">Active</a></li>
-				<li><a href="#/completed">Completed</a></li>
+				<li>
+          <router-link to="/all">
+            All
+          </router-link>
+        </li>
+				<li>
+          <router-link to="/active">
+            Active
+          </router-link>
+        </li>
+				<li>
+          <router-link to="/completed">
+            Completed
+          </router-link>
+        </li>
 			</ul>
 			<button class="clear-completed">
 				Clear completed
@@ -51,15 +63,30 @@
 </template>
 
 <script>
+import filters from '../utils/filters';
+
 export default {
   name: 'Todos',
+
   data() {
     return {
-      isActive: false,
+      visibility: 'all',
       newTodo: '',
       todos: [],
     };
   },
+
+  beforeRouteUpdate(to, from, next) {
+    this.visibility = to.params.filter;
+    next();
+  },
+
+  computed: {
+    filteredTodos() {
+      return filters[this.visibility](this.todos);
+    },
+  },
+
   methods: {
     addTodo() {
       const value = this.newTodo && this.newTodo.trim();
@@ -70,6 +97,7 @@ export default {
       this.newTodo = '';
     },
   },
+
 };
 </script>
 
