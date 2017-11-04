@@ -18,7 +18,7 @@
     		<li
           class="todo"
           :class="{completed: todo.completed}"
-          v-for="todo in filteredTodos"
+          v-for="(todo, index) in filteredTodos"
         >
     			<div class="view">
     				<input
@@ -27,7 +27,10 @@
               v-model="todo.completed"
             >
     				<label>{{todo.title}}</label>
-    				<button class="destroy"></button>
+    				<button
+              class="destroy"
+              @click="removeTodo(index)"
+            ></button>
     			</div>
     			<input class="edit" type="text">
     		</li>
@@ -115,6 +118,9 @@ export default {
       }
       this.todos.push({ title: value, completed: false });
       this.newTodo = '';
+    },
+    removeTodo(index) {
+      this.todos.splice(index, 1);
     },
     clearCompleted() {
       this.todos = filters.active(this.todos);
