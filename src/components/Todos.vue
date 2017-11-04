@@ -36,7 +36,7 @@
 
     <footer class="footer">
 			<span class="todo-count">
-				<strong></strong>1 item left
+				{{activeTodosCount}} {{pluralize('item', activeTodosCount)}} left
 			</span>
 			<ul class="filters">
 				<li>
@@ -95,6 +95,9 @@ export default {
     filteredTodos() {
       return filters[this.visibility](this.todos);
     },
+    activeTodosCount() {
+      return filters.active(this.todos).length;
+    },
   },
 
   methods: {
@@ -105,6 +108,9 @@ export default {
       }
       this.todos.push({ title: value, completed: false });
       this.newTodo = '';
+    },
+    pluralize(word, count) {
+      return word + (count === 1 ? '' : 's');
     },
   },
 
