@@ -22,7 +22,7 @@
       <ul class="todo-list">
     		<li
           class="todo"
-          :class="{completed: todo.completed}"
+          :class="{completed: todo.completed, editing: editedTodo == todo}"
           v-for="(todo, index) in filteredTodos"
         >
     			<div class="view">
@@ -31,13 +31,20 @@
               type="checkbox"
               v-model="todo.completed"
             >
-    				<label>{{todo.title}}</label>
+    				<label @dblclick="editTodo(todo)">{{todo.title}}</label>
     				<button
               class="destroy"
               @click="removeTodo(index)"
             ></button>
     			</div>
-    			<input class="edit" type="text">
+    			<input
+            class="edit"
+            type="text"
+            v-model="todo.title"
+            @blur="updateTodo(index)"
+            @keyup.esc="cancelEdit(index)"
+            @keyup.enter="updateTodo(index)"
+          >
     		</li>
     	</ul>
     </section>
@@ -92,9 +99,11 @@ export default {
 
   data() {
     return {
-      visibility: 'all',
+      beforeEditCache: '',
+      editedTodo: null,
       newTodo: '',
       todos: [],
+      visibility: 'all',
     };
   },
 
@@ -104,9 +113,6 @@ export default {
   },
 
   computed: {
-    filteredTodos() {
-      return filters[this.visibility](this.todos);
-    },
     activeTodosCount() {
       return filters.active(this.todos).length;
     },
@@ -122,6 +128,9 @@ export default {
     completedTodosCount() {
       return filters.completed(this.todos).length;
     },
+    filteredTodos() {
+      return filters[this.visibility](this.todos);
+    },
   },
 
   methods: {
@@ -133,19 +142,45 @@ export default {
       this.todos.push({ title: value, completed: false });
       this.newTodo = '';
     },
-    removeTodo(index) {
-      this.todos.splice(index, 1);
-    },
     clearCompleted() {
       this.todos = filters.active(this.todos);
     },
+    editTodo(todo) {
+      this.beforeEditCache = todo.title;
+      this.editedTodo = todo;
+    },
+    cancelEdit(index) {
+      this.todos[index].title = this.beforeEditCache;
+      this.editedTodo = null;
+    },
+    updateTodo(index) {
+      if (!this.editedTodo) {
+        return;
+      }
+      let newTitle = this.todos[index].title;
+      newTitle = newTitle.trim();
+      this.editedTodo = null;
+
+      if (!newTitle) {
+        this.removeTodo(index);
+      }
+    },
     pluralize(word, count) {
       return word + (count === 1 ? '' : 's');
+    },
+    removeTodo(index) {
+      this.todos.splice(index, 1);
     },
     toggleAll() {
       const completed = filters.active(this.todos).length > 0;
       this.todos = this.todos.map(todo =>
           Object.assign({}, todo, { completed }));
+    },
+  },
+
+  directives: {
+    'todo-focus': {
+      // todo
     },
   },
 
