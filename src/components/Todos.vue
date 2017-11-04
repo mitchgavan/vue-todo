@@ -14,6 +14,11 @@
 		</header>
 
     <section class="main">
+      <input
+        type="checkbox"
+        class="toggle-all"
+        @click="toggleAll"
+      >
       <ul class="todo-list">
     		<li
           class="todo"
@@ -127,6 +132,11 @@ export default {
     },
     pluralize(word, count) {
       return word + (count === 1 ? '' : 's');
+    },
+    toggleAll() {
+      const completed = filters.active(this.todos).length > 0;
+      this.todos = this.todos.map(todo =>
+          Object.assign({}, todo, { completed }));
     },
   },
 
