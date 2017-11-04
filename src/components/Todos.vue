@@ -17,7 +17,7 @@
       <input
         type="checkbox"
         class="toggle-all"
-        @click="toggleAll"
+        v-model="allComplete"
       >
       <ul class="todo-list">
     		<li
@@ -109,6 +109,15 @@ export default {
     },
     activeTodosCount() {
       return filters.active(this.todos).length;
+    },
+    allComplete: {
+      get() {
+        return this.activeTodosCount === 0;
+      },
+      set(value) {
+        this.todos = this.todos.map(todo =>
+          Object.assign({}, todo, { completed: value }));
+      },
     },
     completedTodosCount() {
       return filters.completed(this.todos).length;
