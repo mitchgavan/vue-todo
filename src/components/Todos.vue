@@ -64,7 +64,11 @@
           </router-link>
         </li>
 			</ul>
-			<button class="clear-completed">
+			<button
+        class="clear-completed"
+        v-show="completedTodosCount > 0"
+        @click="clearCompleted"
+      >
 				Clear completed
 			</button>
 		</footer>
@@ -98,6 +102,9 @@ export default {
     activeTodosCount() {
       return filters.active(this.todos).length;
     },
+    completedTodosCount() {
+      return filters.completed(this.todos).length;
+    },
   },
 
   methods: {
@@ -108,6 +115,9 @@ export default {
       }
       this.todos.push({ title: value, completed: false });
       this.newTodo = '';
+    },
+    clearCompleted() {
+      this.todos = filters.active(this.todos);
     },
     pluralize(word, count) {
       return word + (count === 1 ? '' : 's');
