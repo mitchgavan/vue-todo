@@ -41,6 +41,7 @@
             class="edit"
             type="text"
             v-model="todo.title"
+            v-todo-focus="todo == editedTodo"
             @blur="updateTodo(index)"
             @keyup.esc="cancelEdit(index)"
             @keyup.enter="updateTodo(index)"
@@ -179,8 +180,10 @@ export default {
   },
 
   directives: {
-    'todo-focus': {
-      // todo
+    todoFocus(el, binding) {
+      if (binding.value) {
+        el.focus();
+      }
     },
   },
 
