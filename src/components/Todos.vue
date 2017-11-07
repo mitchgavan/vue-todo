@@ -9,7 +9,7 @@
         autocomplete="off"
         placeholder="What needs to be done?"
         :value="newTodo"
-        @input="handleNewTodoChange"
+        @input="onNewTodoChange"
         @keyup.enter="addTodo"
       >
 		</header>
@@ -88,10 +88,7 @@ export default {
   mixins: [pluralize],
 
   beforeRouteUpdate(to, from, next) {
-    this.$store.commit(
-      'changeVisibility',
-      { visibility: to.params.filter },
-    );
+    this.changeVisibility({ visibility: to.params.filter });
     next();
   },
 
@@ -110,16 +107,14 @@ export default {
   },
 
   methods: {
-    handleNewTodoChange(e) {
-      this.$store.commit(
-        'handleNewTodoChange',
-        { newTodo: e.target.value },
-      );
+    onNewTodoChange(e) {
+      this.handleNewTodoChange({ newTodo: e.target.value });
     },
     ...mapMutations([
       'addTodo',
       'clearCompleted',
       'changeVisibility',
+      'handleNewTodoChange',
       'toggleAll',
     ]),
   },

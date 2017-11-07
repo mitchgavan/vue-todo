@@ -47,9 +47,11 @@
       updateTodo(e) {
         const value = e.target.value.trim();
         if (!value) {
-          this.removeTodo(this.index);
+          this.removeTodo({ index: this.index });
+          return;
         }
         this.editTodo({ todo: this.todo, value });
+        this.editing = false;
       },
       cancelEdit(e) {
         e.target.value = this.todo.title;

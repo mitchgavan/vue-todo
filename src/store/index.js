@@ -35,7 +35,6 @@ export default new Vuex.Store({
     },
     editTodo(state, { todo, value }) {
       todo.title = value;
-      state.newTodo = null;
     },
     handleNewTodoChange(state, { newTodo }) {
       state.newTodo = newTodo;
