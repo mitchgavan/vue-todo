@@ -8,7 +8,8 @@
         autofocus
         autocomplete="off"
         placeholder="What needs to be done?"
-        v-model="newTodo"
+        :value="newTodo"
+        @input="handleNewTodoChange"
         @keyup.enter="addTodo"
       >
 		</header>
@@ -17,7 +18,8 @@
       <input
         type="checkbox"
         class="toggle-all"
-        v-model="allComplete"
+        :checked="allComplete"
+        @change="handleToggleAllChange"
       >
       <ul class="todo-list">
     		<li
@@ -93,7 +95,7 @@
 </template>
 
 <script>
-import filters from '../utils/filters';
+import { mapMutations, mapState, mapGetters } from 'vuex';
 
 export default {
   name: 'Todos',
@@ -102,9 +104,6 @@ export default {
     return {
       beforeEditCache: '',
       editedTodo: null,
-      newTodo: '',
-      todos: [],
-      visibility: 'all',
     };
   },
 
@@ -114,69 +113,35 @@ export default {
   },
 
   computed: {
-    activeTodosCount() {
-      return filters.active(this.todos).length;
-    },
-    allComplete: {
-      get() {
-        return this.activeTodosCount === 0;
-      },
-      set(value) {
-        this.todos = this.todos.map(todo =>
-          Object.assign({}, todo, { completed: value }));
-      },
-    },
-    completedTodosCount() {
-      return filters.completed(this.todos).length;
-    },
-    filteredTodos() {
-      return filters[this.visibility](this.todos);
-    },
+    ...mapState([
+      'newTodo',
+      'todos',
+      'visibility',
+    ]),
+    ...mapGetters([
+      'activeTodosCount',
+      'completedTodosCount',
+      'filteredTodos',
+      'allComplete',
+    ]),
   },
 
   methods: {
-    addTodo() {
-      const value = this.newTodo && this.newTodo.trim();
-      if (!value) {
-        return;
-      }
-      this.todos.push({ title: value, completed: false });
-      this.newTodo = '';
+    handleNewTodoChange(e) {
+      this.$store.commit('handleNewTodoChange', e.target.value);
     },
-    clearCompleted() {
-      this.todos = filters.active(this.todos);
+    handleToggleAllChange() {
+      this.$store.commit('toggleAll');
     },
-    editTodo(todo) {
-      this.beforeEditCache = todo.title;
-      this.editedTodo = todo;
-    },
-    cancelEdit(index) {
-      this.todos[index].title = this.beforeEditCache;
-      this.editedTodo = null;
-    },
-    updateTodo(index) {
-      if (!this.editedTodo) {
-        return;
-      }
-      let newTitle = this.todos[index].title;
-      newTitle = newTitle.trim();
-      this.editedTodo = null;
-
-      if (!newTitle) {
-        this.removeTodo(index);
-      }
-    },
-    pluralize(word, count) {
-      return word + (count === 1 ? '' : 's');
-    },
-    removeTodo(index) {
-      this.todos.splice(index, 1);
-    },
-    toggleAll() {
-      const completed = filters.active(this.todos).length > 0;
-      this.todos = this.todos.map(todo =>
-          Object.assign({}, todo, { completed }));
-    },
+    ...mapMutations([
+      'addTodo',
+      'clearCompleted',
+      'editTodo',
+      'cancelEdit',
+      'updateTodo',
+      'pluralize',
+      'removeTodo',
+    ]),
   },
 
   directives: {
