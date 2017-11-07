@@ -8,7 +8,8 @@
         autofocus
         autocomplete="off"
         placeholder="What needs to be done?"
-        v-model="newTodo"
+        :value="newTodo"
+        @input="handleNewTodoChange"
         @keyup.enter="addTodo"
       >
 		</header>
@@ -17,36 +18,16 @@
       <input
         type="checkbox"
         class="toggle-all"
-        v-model="allComplete"
+        :checked="allComplete"
+        @change="toggleAll"
       >
       <ul class="todo-list">
-    		<li
-          class="todo"
-          :class="{completed: todo.completed, editing: editedTodo == todo}"
+    		<todo
           v-for="(todo, index) in filteredTodos"
-        >
-    			<div class="view">
-    				<input
-              class="toggle"
-              type="checkbox"
-              v-model="todo.completed"
-            >
-    				<label @dblclick="editTodo(todo)">{{todo.title}}</label>
-    				<button
-              class="destroy"
-              @click="removeTodo(index)"
-            ></button>
-    			</div>
-    			<input
-            class="edit"
-            type="text"
-            v-model="todo.title"
-            v-todo-focus="todo == editedTodo"
-            @blur="updateTodo(index)"
-            @keyup.esc="cancelEdit(index)"
-            @keyup.enter="updateTodo(index)"
-          >
-    		</li>
+          :todo="todo"
+          :index="index"
+          :key="todo.title + index"
+        ></todo>
     	</ul>
     </section>
 
@@ -93,98 +74,54 @@
 </template>
 
 <script>
-import filters from '../utils/filters';
+import {
+  mapMutations,
+  mapState,
+  mapGetters,
+} from 'vuex';
+import Todo from './Todo';
+import pluralize from '../mixins/pluralize';
 
 export default {
   name: 'Todos',
-
-  data() {
-    return {
-      beforeEditCache: '',
-      editedTodo: null,
-      newTodo: '',
-      todos: [],
-      visibility: 'all',
-    };
-  },
+  components: { Todo },
+  mixins: [pluralize],
 
   beforeRouteUpdate(to, from, next) {
-    this.visibility = to.params.filter;
+    this.$store.commit(
+      'changeVisibility',
+      { visibility: to.params.filter },
+    );
     next();
   },
 
   computed: {
-    activeTodosCount() {
-      return filters.active(this.todos).length;
-    },
-    allComplete: {
-      get() {
-        return this.activeTodosCount === 0;
-      },
-      set(value) {
-        this.todos = this.todos.map(todo =>
-          Object.assign({}, todo, { completed: value }));
-      },
-    },
-    completedTodosCount() {
-      return filters.completed(this.todos).length;
-    },
-    filteredTodos() {
-      return filters[this.visibility](this.todos);
-    },
+    ...mapState([
+      'newTodo',
+      'todos',
+      'visibility',
+    ]),
+    ...mapGetters([
+      'activeTodosCount',
+      'completedTodosCount',
+      'filteredTodos',
+      'allComplete',
+    ]),
   },
 
   methods: {
-    addTodo() {
-      const value = this.newTodo && this.newTodo.trim();
-      if (!value) {
-        return;
-      }
-      this.todos.push({ title: value, completed: false });
-      this.newTodo = '';
+    handleNewTodoChange(e) {
+      this.$store.commit(
+        'handleNewTodoChange',
+        { newTodo: e.target.value },
+      );
     },
-    clearCompleted() {
-      this.todos = filters.active(this.todos);
-    },
-    editTodo(todo) {
-      this.beforeEditCache = todo.title;
-      this.editedTodo = todo;
-    },
-    cancelEdit(index) {
-      this.todos[index].title = this.beforeEditCache;
-      this.editedTodo = null;
-    },
-    updateTodo(index) {
-      if (!this.editedTodo) {
-        return;
-      }
-      let newTitle = this.todos[index].title;
-      newTitle = newTitle.trim();
-      this.editedTodo = null;
-
-      if (!newTitle) {
-        this.removeTodo(index);
-      }
-    },
-    pluralize(word, count) {
-      return word + (count === 1 ? '' : 's');
-    },
-    removeTodo(index) {
-      this.todos.splice(index, 1);
-    },
-    toggleAll() {
-      const completed = filters.active(this.todos).length > 0;
-      this.todos = this.todos.map(todo =>
-          Object.assign({}, todo, { completed }));
-    },
-  },
-
-  directives: {
-    todoFocus(el, binding) {
-      if (binding.value) {
-        el.focus();
-      }
-    },
+    ...mapMutations([
+      'addTodo',
+      'clearCompleted',
+      'changeVisibility',
+      'toggleAll',
+    ]),
   },
 
 };
