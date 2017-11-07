@@ -19,7 +19,7 @@
         type="checkbox"
         class="toggle-all"
         :checked="allComplete"
-        @change="handleToggleAllChange"
+        @change="toggleAll"
       >
       <ul class="todo-list">
     		<li
@@ -33,7 +33,7 @@
               type="checkbox"
               v-model="todo.completed"
             >
-    				<label @dblclick="editTodo(todo)">{{todo.title}}</label>
+    				<label @dblclick="editTodo({ todo: todo })">{{todo.title}}</label>
     				<button
               class="destroy"
               @click="removeTodo(index)"
@@ -44,9 +44,9 @@
             type="text"
             v-model="todo.title"
             v-todo-focus="todo == editedTodo"
-            @blur="updateTodo(index)"
-            @keyup.esc="cancelEdit(index)"
-            @keyup.enter="updateTodo(index)"
+            @blur="updateTodo({ index: index })"
+            @keyup.esc="cancelEdit({ index: index })"
+            @keyup.enter="updateTodo({ index: index })"
           >
     		</li>
     	</ul>
@@ -95,17 +95,14 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapGetters } from 'vuex';
+import {
+  mapMutations,
+  mapState,
+  mapGetters,
+} from 'vuex';
 
 export default {
   name: 'Todos',
-
-  data() {
-    return {
-      beforeEditCache: '',
-      editedTodo: null,
-    };
-  },
 
   beforeRouteUpdate(to, from, next) {
     this.$store.commit('changeVisibility', to.params.filter);
@@ -114,6 +111,8 @@ export default {
 
   computed: {
     ...mapState([
+      'beforeEditCache',
+      'editedTodo',
       'newTodo',
       'todos',
       'visibility',
@@ -130,9 +129,6 @@ export default {
     handleNewTodoChange(e) {
       this.$store.commit('handleNewTodoChange', e.target.value);
     },
-    handleToggleAllChange() {
-      this.$store.commit('toggleAll');
-    },
     ...mapMutations([
       'addTodo',
       'clearCompleted',
@@ -142,6 +138,7 @@ export default {
       'pluralize',
       'removeTodo',
       'changeVisibility',
+      'toggleAll',
     ]),
   },
 
