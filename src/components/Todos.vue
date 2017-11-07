@@ -33,10 +33,10 @@
               type="checkbox"
               v-model="todo.completed"
             >
-    				<label @dblclick="editTodo({ todo: todo })">{{todo.title}}</label>
+    				<label @dblclick="editTodo({ todo })">{{todo.title}}</label>
     				<button
               class="destroy"
-              @click="removeTodo(index)"
+              @click="removeTodo({ index })"
             ></button>
     			</div>
     			<input
@@ -44,9 +44,9 @@
             type="text"
             v-model="todo.title"
             v-todo-focus="todo == editedTodo"
-            @blur="updateTodo({ index: index })"
-            @keyup.esc="cancelEdit({ index: index })"
-            @keyup.enter="updateTodo({ index: index })"
+            @blur="updateTodo({ index })"
+            @keyup.esc="cancelEdit({ index })"
+            @keyup.enter="updateTodo({ index })"
           >
     		</li>
     	</ul>
@@ -105,7 +105,10 @@ export default {
   name: 'Todos',
 
   beforeRouteUpdate(to, from, next) {
-    this.$store.commit('changeVisibility', to.params.filter);
+    this.$store.commit(
+      'changeVisibility',
+      { visibility: to.params.filter },
+    );
     next();
   },
 
@@ -127,7 +130,10 @@ export default {
 
   methods: {
     handleNewTodoChange(e) {
-      this.$store.commit('handleNewTodoChange', e.target.value);
+      this.$store.commit(
+        'handleNewTodoChange',
+        { newTodo: e.target.value },
+      );
     },
     ...mapMutations([
       'addTodo',

@@ -54,19 +54,19 @@ export default new Vuex.Store({
     pluralize(word, count) {
       return word + (count === 1 ? '' : 's');
     },
-    removeTodo(state, index) {
-      state.todos.splice(index, 1);
+    removeTodo(state, payload) {
+      state.todos.splice(payload.index, 1);
     },
     toggleAll(state) {
       const completed = filters.active(state.todos).length > 0;
       state.todos = state.todos.map(todo =>
           Object.assign({}, todo, { completed }));
     },
-    handleNewTodoChange(state, message) {
-      state.newTodo = message;
+    handleNewTodoChange(state, payload) {
+      state.newTodo = payload.newTodo;
     },
-    changeVisibility(state, message) {
-      state.visibility = message;
+    changeVisibility(state, payload) {
+      state.visibility = payload.visibility;
     },
   },
 });
