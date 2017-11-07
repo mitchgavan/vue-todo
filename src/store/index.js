@@ -63,5 +63,8 @@ export default new Vuex.Store({
     handleNewTodoChange(state, message) {
       state.newTodo = message;
     },
+    changeVisibility(state, message) {
+      state.visibility = message;
+    },
   },
 });

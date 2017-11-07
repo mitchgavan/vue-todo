@@ -108,7 +108,7 @@ export default {
   },
 
   beforeRouteUpdate(to, from, next) {
-    this.visibility = to.params.filter;
+    this.$store.commit('changeVisibility', to.params.filter);
     next();
   },
 
@@ -141,6 +141,7 @@ export default {
       'updateTodo',
       'pluralize',
       'removeTodo',
+      'changeVisibility',
     ]),
   },
 
