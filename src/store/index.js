@@ -27,6 +27,9 @@ export default new Vuex.Store({
       state.todos.push({ title: value, completed: false });
       state.newTodo = '';
     },
+    changeVisibility(state, { visibility }) {
+      state.visibility = visibility;
+    },
     clearCompleted(state) {
       state.todos = filters.active(state.todos);
     },
@@ -34,8 +37,8 @@ export default new Vuex.Store({
       todo.title = value;
       state.newTodo = null;
     },
-    pluralize(word, count) {
-      return word + (count === 1 ? '' : 's');
+    handleNewTodoChange(state, { newTodo }) {
+      state.newTodo = newTodo;
     },
     removeTodo(state, { index }) {
       state.todos.splice(index, 1);
@@ -44,12 +47,6 @@ export default new Vuex.Store({
       const completed = filters.active(state.todos).length > 0;
       state.todos = state.todos.map(todo =>
           Object.assign({}, todo, { completed }));
-    },
-    handleNewTodoChange(state, payload) {
-      state.newTodo = payload.newTodo;
-    },
-    changeVisibility(state, payload) {
-      state.visibility = payload.visibility;
     },
   },
 });

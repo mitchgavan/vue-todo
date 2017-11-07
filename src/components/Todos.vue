@@ -80,10 +80,12 @@ import {
   mapGetters,
 } from 'vuex';
 import Todo from './Todo';
+import pluralize from '../mixins/pluralize';
 
 export default {
   name: 'Todos',
   components: { Todo },
+  mixins: [pluralize],
 
   beforeRouteUpdate(to, from, next) {
     this.$store.commit(
@@ -117,7 +119,6 @@ export default {
     ...mapMutations([
       'addTodo',
       'clearCompleted',
-      'pluralize',
       'changeVisibility',
       'toggleAll',
     ]),
