@@ -22,33 +22,12 @@
         @change="toggleAll"
       >
       <ul class="todo-list">
-    		<li
-          class="todo"
-          :class="{completed: todo.completed, editing: editedTodo == todo}"
+    		<todo
           v-for="(todo, index) in filteredTodos"
-        >
-    			<div class="view">
-    				<input
-              class="toggle"
-              type="checkbox"
-              v-model="todo.completed"
-            >
-    				<label @dblclick="editTodo({ todo })">{{todo.title}}</label>
-    				<button
-              class="destroy"
-              @click="removeTodo({ index })"
-            ></button>
-    			</div>
-    			<input
-            class="edit"
-            type="text"
-            v-model="todo.title"
-            v-todo-focus="todo == editedTodo"
-            @blur="updateTodo({ index })"
-            @keyup.esc="cancelEdit({ index })"
-            @keyup.enter="updateTodo({ index })"
-          >
-    		</li>
+          :todo="todo"
+          :index="index"
+          :key="todo.title + index"
+        ></todo>
     	</ul>
     </section>
 
@@ -100,9 +79,11 @@ import {
   mapState,
   mapGetters,
 } from 'vuex';
+import Todo from './Todo';
 
 export default {
   name: 'Todos',
+  components: { Todo },
 
   beforeRouteUpdate(to, from, next) {
     this.$store.commit(
@@ -114,8 +95,6 @@ export default {
 
   computed: {
     ...mapState([
-      'beforeEditCache',
-      'editedTodo',
       'newTodo',
       'todos',
       'visibility',
@@ -138,22 +117,10 @@ export default {
     ...mapMutations([
       'addTodo',
       'clearCompleted',
-      'editTodo',
-      'cancelEdit',
-      'updateTodo',
       'pluralize',
-      'removeTodo',
       'changeVisibility',
       'toggleAll',
     ]),
-  },
-
-  directives: {
-    todoFocus(el, binding) {
-      if (binding.value) {
-        el.focus();
-      }
-    },
   },
 
 };

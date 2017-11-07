@@ -6,8 +6,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    beforeEditCache: '',
-    editedTodo: null,
     newTodo: '',
     todos: [],
     visibility: 'all',
@@ -32,30 +30,15 @@ export default new Vuex.Store({
     clearCompleted(state) {
       state.todos = filters.active(state.todos);
     },
-    editTodo(state, payload) {
-      state.beforeEditCache = payload.todo.title;
-      state.editedTodo = payload.todo;
-    },
-    cancelEdit(state, payload) {
-      state.todos[payload.index].title = state.beforeEditCache;
-      state.editedTodo = null;
-    },
-    updateTodo(state, payload) {
-      if (!state.editedTodo) {
-        return;
-      }
-      let newTitle = state.todos[payload.index].title;
-      newTitle = newTitle.trim();
-      state.editedTodo = null;
-      if (!newTitle) {
-        state.todos.splice(payload.index, 1);
-      }
+    editTodo(state, { todo, value }) {
+      todo.title = value;
+      state.newTodo = null;
     },
     pluralize(word, count) {
       return word + (count === 1 ? '' : 's');
     },
-    removeTodo(state, payload) {
-      state.todos.splice(payload.index, 1);
+    removeTodo(state, { index }) {
+      state.todos.splice(index, 1);
     },
     toggleAll(state) {
       const completed = filters.active(state.todos).length > 0;
