@@ -31,44 +31,7 @@
     	</ul>
     </section>
 
-    <footer class="footer">
-			<span class="todo-count">
-				{{activeTodosCount}} {{pluralize('item', activeTodosCount)}} left
-			</span>
-			<ul class="filters">
-				<li>
-          <router-link
-            to="/all"
-            :class="{selected: visibility == 'all'}"
-          >
-            All
-          </router-link>
-        </li>
-				<li>
-          <router-link
-            to="/active"
-            :class="{selected: visibility == 'active'}"
-          >
-            Active
-          </router-link>
-        </li>
-				<li>
-          <router-link
-            to="/completed"
-            :class="{selected: visibility == 'completed'}"
-          >
-            Completed
-          </router-link>
-        </li>
-			</ul>
-			<button
-        class="clear-completed"
-        v-show="completedTodosCount > 0"
-        @click="clearCompleted"
-      >
-				Clear completed
-			</button>
-		</footer>
+    <nav-bar></nav-bar>
 
   </section>
 </template>
@@ -80,27 +43,21 @@ import {
   mapGetters,
 } from 'vuex';
 import Todo from './Todo';
-import pluralize from '../mixins/pluralize';
+import NavBar from './NavBar';
 
 export default {
   name: 'Todos',
-  components: { Todo },
-  mixins: [pluralize],
-
+  components: { 'nav-bar': NavBar, Todo },
   beforeRouteUpdate(to, from, next) {
     this.changeVisibility({ visibility: to.params.filter });
     next();
   },
-
   computed: {
     ...mapState([
       'newTodo',
       'todos',
-      'visibility',
     ]),
     ...mapGetters([
-      'activeTodosCount',
-      'completedTodosCount',
       'filteredTodos',
       'allComplete',
     ]),
@@ -112,7 +69,6 @@ export default {
     },
     ...mapMutations([
       'addTodo',
-      'clearCompleted',
       'changeVisibility',
       'handleNewTodoChange',
       'toggleAll',
@@ -121,7 +77,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-
-</style>
