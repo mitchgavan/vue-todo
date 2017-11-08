@@ -10,7 +10,7 @@
         placeholder="What needs to be done?"
         :value="newTodo"
         @input="onNewTodoChange"
-        @keyup.enter="addTodo"
+        @keyup.enter="ADD_TODO"
       >
 		</header>
 
@@ -19,7 +19,7 @@
         type="checkbox"
         class="toggle-all"
         :checked="allComplete"
-        @change="toggleAll"
+        @change="TOGGLE_ALL"
       >
       <ul class="todo-list">
     		<todo
@@ -42,6 +42,12 @@ import {
   mapState,
   mapGetters,
 } from 'vuex';
+import {
+  ADD_TODO,
+  CHANGE_VISIBILITY,
+  HANDLE_NEW_TODO_CHANGE,
+  TOGGLE_ALL,
+} from '../store/mutation-types';
 import Todo from './Todo';
 import NavBar from './NavBar';
 
@@ -49,7 +55,7 @@ export default {
   name: 'Todos',
   components: { 'nav-bar': NavBar, Todo },
   beforeRouteUpdate(to, from, next) {
-    this.changeVisibility({ visibility: to.params.filter });
+    this[CHANGE_VISIBILITY]({ visibility: to.params.filter });
     next();
   },
   computed: {
@@ -65,13 +71,13 @@ export default {
 
   methods: {
     onNewTodoChange(e) {
-      this.handleNewTodoChange({ newTodo: e.target.value });
+      this[HANDLE_NEW_TODO_CHANGE]({ newTodo: e.target.value });
     },
     ...mapMutations([
-      'addTodo',
-      'changeVisibility',
-      'handleNewTodoChange',
-      'toggleAll',
+      ADD_TODO,
+      CHANGE_VISIBILITY,
+      HANDLE_NEW_TODO_CHANGE,
+      TOGGLE_ALL,
     ]),
   },
 

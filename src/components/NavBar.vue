@@ -32,7 +32,7 @@
     <button
       class="clear-completed"
       v-show="completedTodosCount > 0"
-      @click="clearCompleted"
+      @click="CLEAR_COMPLETED"
     >
       Clear completed
     </button>
@@ -45,6 +45,7 @@
     mapState,
     mapGetters,
   } from 'vuex';
+  import { CLEAR_COMPLETED } from '../store/mutation-types';
   import pluralize from '../mixins/pluralize';
 
   export default {
@@ -61,7 +62,7 @@
     },
     methods: {
       ...mapMutations([
-        'clearCompleted',
+        CLEAR_COMPLETED,
       ]),
     },
 

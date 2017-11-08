@@ -12,7 +12,7 @@
       <label @dblclick="editing = true">{{todo.title}}</label>
       <button
         class="destroy"
-        @click="removeTodo({ index })"
+        @click="REMOVE_TODO({ index })"
       ></button>
     </div>
     <input
@@ -30,6 +30,7 @@
 
 <script>
   import { mapMutations } from 'vuex';
+  import { EDIT_TODO, REMOVE_TODO } from '../store/mutation-types';
 
   export default {
     name: 'Todo',
@@ -41,16 +42,16 @@
     },
     methods: {
       ...mapMutations([
-        'editTodo',
-        'removeTodo',
+        EDIT_TODO,
+        REMOVE_TODO,
       ]),
       updateTodo(e) {
         const value = e.target.value.trim();
         if (!value) {
-          this.removeTodo({ index: this.index });
+          this[REMOVE_TODO]({ index: this.index });
           return;
         }
-        this.editTodo({ todo: this.todo, value });
+        this[EDIT_TODO]({ todo: this.todo, value });
         this.editing = false;
       },
       cancelEdit(e) {

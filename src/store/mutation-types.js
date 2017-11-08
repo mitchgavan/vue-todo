@@ -1,0 +1,7 @@
+export const ADD_TODO = 'ADD_TODO';
+export const EDIT_TODO = 'EDIT_TODO';
+export const REMOVE_TODO = 'REMOVE_TODO';
+export const CHANGE_VISIBILITY = 'CHANGE_VISIBILITY';
+export const CLEAR_COMPLETED = 'CLEAR_COMPLETED';
+export const HANDLE_NEW_TODO_CHANGE = 'HANDLE_NEW_TODO_CHANGE';
+export const TOGGLE_ALL = 'TOGGLE_ALL';

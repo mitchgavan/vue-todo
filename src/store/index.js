@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import filters from '../utils/filters';
+import * as types from './mutation-types';
 
 Vue.use(Vuex);
 
@@ -19,7 +20,7 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    addTodo(state) {
+    [types.ADD_TODO](state) {
       const value = state.newTodo && state.newTodo.trim();
       if (!value) {
         return;
@@ -27,22 +28,22 @@ export default new Vuex.Store({
       state.todos.push({ title: value, completed: false });
       state.newTodo = '';
     },
-    changeVisibility(state, { visibility }) {
+    [types.CHANGE_VISIBILITY](state, { visibility }) {
       state.visibility = visibility;
     },
-    clearCompleted(state) {
+    [types.CLEAR_COMPLETED](state) {
       state.todos = filters.active(state.todos);
     },
-    editTodo(state, { todo, value }) {
+    [types.EDIT_TODO](state, { todo, value }) {
       todo.title = value;
     },
-    handleNewTodoChange(state, { newTodo }) {
+    [types.HANDLE_NEW_TODO_CHANGE](state, { newTodo }) {
       state.newTodo = newTodo;
     },
-    removeTodo(state, { index }) {
+    [types.REMOVE_TODO](state, { index }) {
       state.todos.splice(index, 1);
     },
-    toggleAll(state) {
+    [types.TOGGLE_ALL](state) {
       const completed = filters.active(state.todos).length > 0;
       state.todos = state.todos.map(todo =>
           Object.assign({}, todo, { completed }));
